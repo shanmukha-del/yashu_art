@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Art Classes | Yashu Arts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+</head>
+<body>
+  <canvas id="canvas3d"></canvas>
+
+  <audio id="bgMusic" loop>
+    <source src="bg-music.mp3" type="audio/mpeg">
+  </audio>
+
+  <nav>
+    <div class="nav-left" onclick="location.href='home.html'">
+      <h1>YASHU <span class="blue-text">ARTS</span></h1>
+    </div>
+    <div class="nav-links">
+      <a href="home.html" class="nav-link">Home</a>
+      <a href="about.html" class="nav-link">Artist</a>
+      <button id="musicBtn" class="btn-cyan" onclick="toggleMusic()" style="padding: 10px 15px;">🔇</button>
+    </div>
+  </nav>
+
+  <main class="container" style="max-width: 900px; padding: 60px 20px; text-align: center;">
+    <h2 style="font-size: 56px; font-weight: 900; letter-spacing: -2px; margin-bottom: 20px;">ART <span class="blue-text">WORKSHOPS</span></h2>
+    <p style="color: var(--text-dim); margin-bottom: 50px; font-size: 18px;">Master the techniques of realism with professional guidance.</p>
+
+    <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 60px;">
+        <img src="classes-poster.jpg" alt="Workshops" style="width: 100%; display: block;">
+        <div style="padding: 40px; text-align: left;">
+            <h3 style="color: var(--neon-cyan); font-size: 28px; margin-bottom: 15px;">Learn the Art of Realism</h3>
+            <p style="color: var(--text-dim); line-height: 1.8;">
+                Join our exclusive online and offline workshops conducted by <b style="color: white;">Yasaswini Sharma</b>.<br>
+                Daily one hour (Online) | Batch: Mon, Wed, Fri.<br>
+                📞 <span style="color: var(--neon-cyan);">93980 29785</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="card" style="max-width: 600px; margin: 0 auto; text-align: left;">
+        <h3 style="margin-bottom: 25px; font-size: 24px;">Enquiry Form</h3>
+        <input id="qName" placeholder="Full Name" style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; color: white; margin-bottom: 15px;">
+        <input id="qPhone" placeholder="Phone Number" style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; color: white; margin-bottom: 15px;">
+        <textarea id="qMsg" placeholder="Your Message" style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; color: white; margin-bottom: 20px; min-height: 120px;"></textarea>
+        <button onclick="submitEnquiry()" class="btn-cyan" style="width: 100%; padding: 18px;">Send via WhatsApp</button>
+    </div>
+  </main>
+
+  <script src="shared.js"></script>
+  <script src="background3d.js"></script>
+  <script>
+      function submitEnquiry() {
+          const msg = `Art Class Interest:\nName: ${qName.value}\nPhone: ${qPhone.value}\nMsg: ${qMsg.value}`;
+          window.open("https://wa.me/9398029785?text=" + encodeURIComponent(msg));
+      }
+  </script>
+</body>
+</html>

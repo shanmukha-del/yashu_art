@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PROJECT-D | PART-1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+html,body{
+  margin:0;
+  height:100%;
+  background:#050505;
+  font-family:Poppins,sans-serif;
+  overflow:hidden;
+  color:#d4af37;
+}
+
+/* HEADER */
+header{
+  position:fixed;
+  top:0;
+  width:100%;
+  padding:14px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(0,0,0,.6);
+  z-index:10;
+}
+
+/* SLIDER */
+.slider{
+  display:flex;
+  width:300vw;
+  height:100vh;
+  transition:transform .8s cubic-bezier(.25,.8,.25,1);
+}
+
+.slide{
+  width:100vw;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.slide img,
+.slide video{
+  max-width:90%;
+  max-height:80%;
+  border-radius:18px;
+  box-shadow:0 25px 60px rgba(212,175,55,.35);
+}
+
+/* BUTTONS */
+.ctrl{
+  position:fixed;
+  bottom:22px;
+  display:flex;
+  gap:12px;
+  width:100%;
+  justify-content:center;
+  z-index:10;
+}
+.ctrl button{
+  background:rgba(0,0,0,.6);
+  border:1px solid #d4af37;
+  color:#d4af37;
+  padding:10px 18px;
+  border-radius:30px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>PART-1</div>
+  <button onclick="goBack()">← Back</button>
+
+</header>
+
+<div class="slider" id="slider">
+  <div class="slide"><img src="part-1 image.png"></div>
+  <div class="slide"><video src="part-1 animation1.mp4" controls></video></div>
+  <div class="slide"><video src="part-1 animation2.mp4" controls></video></div>
+</div>
+
+<div class="ctrl">
+  <button onclick="prev()">◀ Prev</button>
+  <button onclick="next()">Next ▶</button>
+</div>
+
+<script>
+let index=0,startX=0,down=false;
+const slider=document.getElementById("slider");
+
+document.addEventListener("pointerdown",e=>{
+  startX=e.clientX;down=true;
+});
+document.addEventListener("pointerup",e=>{
+  if(!down)return;
+  let d=e.clientX-startX;
+  if(d<-60 && index<2)index++;
+  if(d>60 && index>0)index--;
+  move();down=false;
+});
+
+function move(){
+  slider.style.transform=`translateX(-${index*100}vw)`;
+}
+function next(){ if(index<2){index++;move()} }
+function prev(){ if(index>0){index--;move()} }
+function goBack(){
+  window.location.href = "part.html";
+}
+
+</script>
+
+</body>
+</html>

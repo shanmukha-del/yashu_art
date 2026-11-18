@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artwork Details | Yashu Arts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    /* Global styles provide deep theme support */
+  </style>
+</head>
+<body>
+  <canvas id="canvas3d"></canvas>
+
+  <audio id="bgMusic" loop>
+    <source src="bg-music.mp3" type="audio/mpeg">
+  </audio>
+
+  <nav>
+    <div class="nav-left" onclick="location.href='home.html'">
+      <h1>YASHU <span class="blue-text">ARTS</span></h1>
+    </div>
+    <div class="nav-links">
+      <a href="home.html" class="nav-link">Home</a>
+      <a href="about.html" class="nav-link">Artist</a>
+      <button id="musicBtn" class="btn-cyan" onclick="toggleMusic()" style="padding: 10px 15px;">🔇</button>
+    </div>
+  </nav>
+
+  <main class="container">
+    <button class="btn-outline" onclick="history.back()" style="margin: 40px 0; display: inline-flex; align-items: center; gap: 10px;">
+      ← Back to Gallery
+    </button>
+    
+    <div id="productDetail" class="card" style="display: flex; gap: 50px; padding: 50px; align-items: center;">
+        <!-- Details injected here -->
+    </div>
+
+    <h3 style="margin-top: 80px; font-size: 28px; font-family: 'Playfair Display', serif; color: var(--neon-cyan);">Suggested Artworks</h3>
+    <div id="suggestions" class="product-grid" style="margin-top: 30px;"></div>
+  </main>
+
+  <script src="supabase.js"></script>
+  <script src="shared.js"></script>
+  <script src="background3d.js"></script>
+  <script>
+    const art = JSON.parse(localStorage.getItem('selectedArt'));
+    if (!art) location.href = 'home.html';
+
+    productDetail.style.flexDirection = window.innerWidth < 800 ? 'column' : 'row';
+
+    productDetail.innerHTML = `
+        <div style="flex: 1;">
+            <img src="${art.image_url}" alt="${art.art_name}" style="width: 100%; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+        </div>
+        <div style="flex: 1;">
+            <h2 style="font-size: 48px; letter-spacing: -1px; margin-bottom: 10px;">${art.art_name}</h2>
+            <p style="color: var(--text-dim); margin-bottom: 30px; font-size: 18px;">Premium Masterpiece | Artwork ID: ${art.art_id}</p>
+            <button class="btn-cyan" onclick="shareOnWhatsApp()" style="width: 100%; padding: 20px; font-size: 16px;">
+                Shop via WhatsApp
+            </button>
+        </div>
+    `;
+
+    async function loadSuggestions() {
+        allArts = await fetchAllArts();
+        const filtered = allArts.filter(a => a.art_id !== art.art_id).sort(() => 0.5 - Math.random()).slice(0, 4);
+        suggestions.innerHTML = filtered.map(a => `
+            <div class="card show reveal" onclick="viewProduct('${a.art_id}')">
+                <img src="${a.image_url}">
+                <h4>${a.art_name}</h4>
+                <button class="btn-card">View</button>
+            </div>
+        `).join('');
+    }
+
+    function viewProduct(id) {
+        const selected = allArts.find(a => a.art_id === id);
+        localStorage.setItem('selectedArt', JSON.stringify(selected));
+        location.reload();
+    }
+
+    function shareOnWhatsApp() {
+        const websiteUrl = window.location.origin + window.location.pathname;
+        const msg = encodeURIComponent(`HELLO YASHU ARTS\n\nI'm interested in this artwork:\n\nArt Name: ${art.art_name}\nArt ID: ${art.art_id}\n\nImage: ${art.image_url}\n\nLink: ${websiteUrl}\n\nPromo: INDFST`);
+        window.open(`https://wa.me/9398029785?text=${msg}`);
+    }
+
+    loadSuggestions();
+  </script>
+</body>
+</html>

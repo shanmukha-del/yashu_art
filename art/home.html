@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yashu Arts | Shop Luxury Art</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+  <canvas id="canvas3d"></canvas>
+
+  <audio id="bgMusic" loop>
+    <source src="bg-music.mp3" type="audio/mpeg">
+  </audio>
+
+  <nav>
+    <div class="nav-left" onclick="location.href='home.html'">
+      <h1>YASHU <span class="blue-text">ARTS</span></h1>
+    </div>
+    <div class="nav-links">
+      <a href="home.html" class="nav-link">Home</a>
+      <a href="about.html" class="nav-link">Artist</a>
+      <a href="classes.html" class="nav-link">Classes</a>
+      <button id="musicBtn" class="btn-cyan" onclick="toggleMusic()" style="padding: 10px 15px;">🔇</button>
+      <a href="admin.html" class="btn-outline">Admin</a>
+    </div>
+  </nav>
+
+  <header class="hero-box">
+    <h1>
+      <span class="title-white">YASHU</span>
+      <span class="title-outline">ARTS</span>
+    </h1>
+    <p class="hero-tagline">
+      Experience the future of realistic art. Breath-taking visuals, premium 
+      portraits, and hyper-realistic charcoal masterpieces.
+    </p>
+
+    <div class="interaction-container">
+      <div class="chips-container">
+        <div class="category-chip active" onclick="filterCategory('All')">All Species</div>
+        <div class="category-chip" onclick="filterCategory('Sketch')">Sketches</div>
+        <div class="category-chip" onclick="filterCategory('Portrait')">Portraits</div>
+        <div class="category-chip" onclick="filterCategory('Color')">Color Art</div>
+      </div>
+      <div class="search-wrap">
+        <span style="opacity: 0.5;">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search for art..." oninput="filterArts()">
+        <span onclick="startVoiceSearch()" style="cursor: pointer; opacity: 0.5;">🎤</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="gallery" class="product-grid">
+      <!-- Art Cards injected here -->
+    </div>
+  </main>
+
+  <div class="floating-container">
+    <a id="insta-float" class="float-link" target="_blank" href="https://instagram.com/yashu_arts_1067">📸</a>
+    <a id="whatsapp-float" class="float-link" target="_blank" href="https://wa.me/9398029785">💬</a>
+  </div>
+  
+  <div id="projectd-orb" onclick="location.href='projectd.html'">PROJECT-D</div>
+
+  <div id="offerOverlay">
+    <div class="offer-card">
+      <h2 style="color:var(--neon-cyan); font-size:32px; margin-bottom: 20px;">INDIA FEST OFFER</h2>
+      <p style="color:var(--text-dim); line-height:1.6; margin-bottom: 30px;">
+        Any Art Work @ Just <b style="color:white;">₹1000/-</b><br>
+        <span style="color:#25d366;">+ FREE Shipping 🚚</span><br>
+        <span style="color:var(--neon-cyan);">+ 1 Extra Art Work FREE 🎨</span>
+      </p>
+      <div style="padding: 15px; border: 1px dashed var(--neon-cyan); color: white; border-radius: 10px; margin-bottom: 20px;">PROMO: INDFST</div>
+      <button onclick="dismissOffer()" class="btn-cyan" style="width:100%;">Claim Offer</button>
+      <p onclick="dismissOffer()" style="margin-top: 20px; font-size: 12px; cursor: pointer; opacity: 0.5;">Close</p>
+    </div>
+  </div>
+
+  <footer style="padding: 60px 5%; border-top: 1px solid var(--glass-border); text-align: center; margin-top: 100px;">
+    <p style="color: var(--text-dim);">© 2026 YASHU ARTS. All Rights Reserved.</p>
+  </footer>
+
+  <script src="supabase.js"></script>
+  <script src="shared.js"></script>
+  <script src="background3d.js"></script>
+  <script>
+    async function loadGallery() {
+        allArts = await fetchAllArts();
+        renderGallery(allArts);
+        observeReveals();
+    }
+
+    function renderGallery(arts) {
+        gallery.innerHTML = arts.map((a, i) => `
+          <div class="card reveal" style="transition-delay: ${i * 0.1}s" onclick="viewProduct('${a.art_id}')">
+            <img src="${a.image_url}" alt="${a.art_name}">
+            <h4>${a.art_name}</h4>
+            <span class="price-info">Artwork ID: ${a.art_id}</span>
+            <button class="btn-card" onclick="event.stopPropagation(); viewProduct('${a.art_id}')">View Details</button>
+          </div>
+        `).join('');
+        
+        // Trigger short delay for initials cards
+        setTimeout(() => {
+            document.querySelectorAll('.card').forEach(c => c.classList.add('show'));
+        }, 100);
+    }
+
+    function observeReveals() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    }
+
+    // 🚀 HYPER-REALISTIC MOUSE TITLE TILT
+    const heroTitle = document.querySelector('.hero-box h1');
+    document.addEventListener('mousemove', (e) => {
+        const x = (window.innerWidth / 2 - e.pageX) / 25;
+        const y = (window.innerHeight / 2 - e.pageY) / 25;
+        heroTitle.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+    });
+
+    function viewProduct(id) {
+        const art = allArts.find(a => a.art_id === id);
+        localStorage.setItem('selectedArt', JSON.stringify(art));
+        location.href = 'product.html';
+    }
+
+    function filterCategory(cat) {
+        document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+        event.target.classList.add('active');
+        if (cat === 'All') renderGallery(allArts);
+        else renderGallery(allArts.filter(a => a.art_name.toLowerCase().includes(cat.toLowerCase())));
+    }
+
+    function filterArts() {
+        const key = searchInput.value.toLowerCase();
+        renderGallery(allArts.filter(a => a.art_name.toLowerCase().includes(key) || a.art_id.toLowerCase().includes(key)));
+    }
+
+    function startVoiceSearch() {
+        if (!('webkitSpeechRecognition' in window)) return alert("Not supported");
+        const rec = new webkitSpeechRecognition();
+        rec.lang = "en-IN";
+        rec.start();
+        rec.onresult = (e) => {
+            searchInput.value = e.results[0][0].transcript;
+            filterArts();
+        }
+    }
+
+    loadGallery();
+  </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Profile | Yashu Arts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global.css">
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 60px auto;
+            display: flex;
+            gap: 50px;
+            align-items: center;
+        }
+        .profile-img-box {
+            flex: 1;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        .profile-img-box img {
+            width: 100%;
+            border-radius: 30px;
+            box-shadow: var(--premium-shadow);
+            transform: translateZ(30px);
+            border: 5px solid white;
+        }
+        .profile-text {
+            flex: 1.5;
+            transform-style: preserve-3d;
+        }
+        .profile-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: var(--deep-emerald);
+            margin-bottom: 20px;
+            transform: translateZ(50px);
+        }
+        .profile-text p {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 30px;
+            transform: translateZ(30px);
+        }
+        .stats {
+            display: flex;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .stat-item {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            flex: 1;
+        }
+        .stat-item h3 { color: var(--royal-gold); font-size: 24px; }
+        .stat-item span { font-size: 14px; color: #888; text-transform: uppercase; }
+
+        @media (max-width: 800px) {
+            .profile-container { flex-direction: column; text-align: center; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas3d"></canvas>
+
+    <audio id="bgMusic" loop>
+        <source src="bg-music.mp3" type="audio/mpeg">
+    </audio>
+
+  <nav>
+    <div class="nav-left" onclick="location.href='home.html'">
+      <h1>YASHU <span class="blue-text">ARTS</span></h1>
+    </div>
+    <div class="nav-links">
+      <a href="home.html" class="nav-link">Home</a>
+      <a href="classes.html" class="nav-link">Classes</a>
+      <button id="musicBtn" class="btn-cyan" onclick="toggleMusic()" style="padding: 10px 15px;">🔇</button>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="card" style="display: flex; gap: 50px; padding: 60px; margin-top: 60px; align-items: center;">
+      <div style="flex: 1;">
+        <img src="artist.jpg" alt="Yasaswini Sharma" style="width: 100%; border-radius: 30px; border: 2px solid var(--neon-cyan); box-shadow: 0 0 50px var(--neon-cyan-glow);">
+      </div>
+      <div style="flex: 1.5;">
+        <h2 style="font-size: 60px; font-weight: 900; letter-spacing: -2px; margin-bottom: 20px;">YASASWINI <span class="blue-text">SHARMA</span></h2>
+        <p style="font-size: 18px; line-height: 1.8; color: var(--text-dim); margin-bottom: 40px;">
+          Passionate realistic artist and educator specialized in charcoal, graphite, and oil portraits. 
+          With over 8 years of experience, she has created hundreds of customized masterpieces for clients worldwide. 
+          Her vision is to bring realistic art into every home and inspire the next generation through her dedicated art classes.
+        </p>
+        
+        <div style="display: flex; gap: 20px;">
+          <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; flex: 1; text-align: center;">
+            <h3 style="color: var(--neon-cyan); font-size: 32px;">500+</h3>
+            <span style="font-size: 13px; color: var(--text-dim); text-transform: uppercase;">Works</span>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; flex: 1; text-align: center;">
+            <h3 style="color: var(--neon-cyan); font-size: 32px;">200+</h3>
+            <span style="font-size: 13px; color: var(--text-dim); text-transform: uppercase;">Students</span>
+          </div>
+        </div>
+
+        <button class="btn-cyan" onclick="location.href='https://wa.me/9398029785'" style="width: 100%; margin-top: 40px; padding: 20px;">
+          Chat with Artist
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script src="shared.js"></script>
+  <script src="background3d.js"></script>
+</body>
+</html>

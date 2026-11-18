@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PROJECT-D | SPLASH</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Outfit:wght@800&display=swap" rel="stylesheet">
+  <style>
+    body, html {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      background: black;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    #instant {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #060b13;
+      z-index: 20;
+    }
+
+    #instant h1 {
+      font-size: 8vw;
+      color: white;
+      font-weight: 950;
+      letter-spacing: -2px;
+      margin: 0;
+      opacity: 0;
+      transform: scale(0.8);
+      animation: zoomIn 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+
+    .blue-text { color: #00f2ff; text-shadow: 0 0 40px rgba(0, 242, 255, 0.5); }
+
+    @keyframes zoomIn {
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    #video {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 10;
+      opacity: 0;
+      transition: opacity 1.5s;
+    }
+
+    .scan-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00f2ff, transparent);
+      box-shadow: 0 0 20px #00f2ff;
+      top: -100px;
+      animation: scanSweep 3s infinite linear;
+    }
+
+    @keyframes scanSweep {
+      0% { top: -100px; }
+      100% { top: 110%; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="instant">
+  <div class="scan-line"></div>
+  <h1>PROJECT <span class="blue-text">-D</span></h1>
+  <p style="color: rgba(255,255,255,0.3); margin-top: 20px; letter-spacing: 10px; font-weight: 700;">INITIALIZING</p>
+</div>
+
+<video id="video" muted playsinline preload="auto">
+  <source src="splash screen animation.mp4" type="video/mp4">
+</video>
+
+<script>
+  const video = document.getElementById("video");
+  const instant = document.getElementById("instant");
+
+  video.onplaying = () => {
+    video.style.opacity = "1";
+    setTimeout(() => {
+      instant.style.opacity = "0";
+      setTimeout(() => instant.style.display = "none", 1500);
+    }, 800);
+  };
+
+  video.play().catch(() => {
+    setTimeout(() => location.href = "part.html", 4000);
+  });
+
+  video.onended = () => {
+    location.href = "part.html";
+  };
+
+  setTimeout(() => {
+    if (video.paused) location.href = "part.html";
+  }, 6000);
+</script>
+</body>
+</html>
+
+</body>
+</html>

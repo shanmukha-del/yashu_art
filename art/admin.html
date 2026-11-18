@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | Yashu Arts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+  <style>
+    .admin-box { background: rgba(255, 255, 255, 0.02); padding: 40px; border-radius: 20px; border: 1px solid var(--glass-border); max-width: 600px; margin: 60px auto; backdrop-filter: blur(20px); }
+    input, select, textarea { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; color: white; margin: 10px 0; }
+    .hidden { display: none; }
+    #cropModal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+    #cropBox { background: var(--deep-black); padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; border: 1px solid var(--neon-cyan); }
+  </style>
+</head>
+<body>
+  <canvas id="canvas3d"></canvas>
+
+  <audio id="bgMusic" loop>
+    <source src="bg-music.mp3" type="audio/mpeg">
+  </audio>
+
+  <nav>
+    <div class="nav-left" onclick="location.href='home.html'">
+      <h1>YASHU <span class="blue-text">ARTS</span></h1>
+    </div>
+    <div class="nav-links">
+      <a href="home.html" class="nav-link">Home</a>
+      <a href="about.html" class="nav-link">Artist</a>
+      <button id="musicBtn" class="btn-cyan" onclick="toggleMusic()" style="padding: 10px 15px;">🔇</button>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div id="loginView" class="admin-box">
+        <h2 style="margin-bottom: 30px; font-size: 32px; font-weight: 900;">ADMIN <span class="blue-text">LOGIN</span></h2>
+        <input id="email" placeholder="Email Address">
+        <input id="pass" type="password" placeholder="Password">
+        <button onclick="handleLogin()" class="btn-cyan" style="width: 100%; margin-top: 20px;">Secure Login</button>
+    </div>
+
+    <div id="dashboardView" class="admin-box hidden" style="max-width: 800px;">
+        <h2 style="font-size: 32px; font-weight: 900; margin-bottom: 30px;">ADMIN <span class="blue-text">DASHBOARD</span></h2>
+        
+        <div style="display: flex; gap: 15px; margin-bottom: 40px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;">
+            <button onclick="showSection('add')" class="btn-outline">Add Artwork</button>
+            <button onclick="showSection('del')" class="btn-outline">Manage Catalog</button>
+            <button onclick="handleLogout()" class="btn-outline" style="background: rgba(255,0,0,0.1); border-color: rgba(255,0,0,0.3); color: #ff4444;">Logout</button>
+        </div>
+
+        <div id="addSec" class="hidden">
+            <h3 style="margin-bottom: 20px; color: var(--neon-cyan);">Post New Masterpiece</h3>
+            <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); text-align: center; margin-bottom: 20px;">
+                <input type="file" id="artFile" style="border: none; padding: 0;">
+            </div>
+            <input id="artName" placeholder="Artwork Name (e.g. Master Portrait)">
+            <input id="artId" placeholder="Unique Art ID (e.g. YA-101)">
+            <button onclick="openCrop()" class="btn-cyan" style="width: 100%; margin-top: 20px;">Crop & Post to Gallery</button>
+        </div>
+
+        <div id="delSec" class="hidden">
+            <h3 style="margin-bottom: 20px; color: #ff4444;">Delete Artwork</h3>
+            <select id="delSelect" style="margin-bottom: 20px;"></select>
+            <button onclick="handleDelete()" class="btn-cyan" style="background: #ff4444; color: white; border: none; width: 100%;">Confirm Delete</button>
+        </div>
+    </div>
+  </main>
+
+  <div id="cropModal">
+      <div id="cropBox">
+          <h3 style="margin-bottom: 20px;">Adjust Framing</h3>
+          <img id="cropImg" style="width: 100%; border-radius: 10px;">
+          <div style="margin-top: 30px; display: flex; gap: 15px;">
+              <button onclick="applyCrop()" class="btn-cyan" style="flex: 1;">Save Changes</button>
+              <button onclick="closeCrop()" class="btn-outline" style="flex: 1;">Cancel</button>
+          </div>
+      </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+  <script src="supabase.js"></script>
+  <script src="shared.js"></script>
+  <script src="background3d.js"></script>
+  <script>
+    let cropper;
+    let croppedBlob;
+
+    async function handleLogin() {
+        const ok = await adminLogin(email.value, pass.value);
+        if (ok) {
+            loginView.classList.add('hidden');
+            dashboardView.classList.remove('hidden');
+            loadDeleteList();
+        }
+    }
+
+    function handleLogout() {
+        adminLogout();
+        location.reload();
+    }
+
+    function showSection(s) {
+        addSec.classList.add('hidden');
+        delSec.classList.add('hidden');
+        if (s === 'add') addSec.classList.remove('hidden');
+        else delSec.classList.remove('hidden');
+    }
+
+    async function loadDeleteList() {
+        allArts = await fetchAllArts();
+        delSelect.innerHTML = allArts.map(a => `<option value="${a.art_id}">${a.art_name}</option>`).join('');
+    }
+
+    function openCrop() {
+        const file = artFile.files[0];
+        if (!file) return alert("Please select an image first");
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            cropImg.src = e.target.result;
+            cropModal.style.display = 'flex';
+            if (cropper) cropper.destroy();
+            cropper = new Cropper(cropImg, { aspectRatio: 1, viewMode: 1 });
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function applyCrop() {
+        cropper.getCroppedCanvas().toBlob(async (blob) => {
+            croppedBlob = blob;
+            closeCrop();
+            const file = new File([blob], "art.png", { type: "image/png" });
+            const btn = event.target;
+            btn.innerText = "Uploading...";
+            btn.disabled = true;
+            const success = await submitArt(file, artName.value, artId.value);
+            if (success) {
+                alert("Masterpiece Successfully Uploaded!");
+                artName.value = "";
+                artId.value = "";
+                artFile.value = "";
+                showSection('del');
+                loadDeleteList();
+            }
+            btn.innerText = "Save Changes";
+            btn.disabled = false;
+        }, 'image/png');
+    }
+
+    function closeCrop() { cropModal.style.display = 'none'; }
+
+    async function handleDelete() {
+        if (!confirm("Are you sure you want to permanently remove this masterpiece?")) return;
+        const art = allArts.find(a => a.art_id === delSelect.value);
+        const ok = await deleteArt(art.art_id, art.image_url);
+        if (ok) {
+            alert("Deleted!");
+            loadDeleteList();
+        }
+    }
+  </script>
+</body>
+</html>

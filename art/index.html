@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yashu Arts | Premium Gateway</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neon-cyan: #00f2ff;
+      --deep-black: #060b13;
+    }
+    body, html {
+      margin: 0; padding: 0;
+      height: 100%; overflow: hidden;
+      background: var(--deep-black);
+      display: flex; justify-content: center; align-items: center;
+      font-family: 'Outfit', sans-serif;
+      perspective: 1500px;
+    }
+    #splash {
+      text-align: center;
+    }
+    .logo-box {
+      position: relative;
+      width: 180px; height: 180px;
+      margin: 0 auto 50px;
+      transform-style: preserve-3d;
+      animation: logoEntrance 2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+    @keyframes logoEntrance {
+      0% { transform: scale(0) rotateX(-90deg); opacity: 0; }
+      100% { transform: scale(1) rotateX(0); opacity: 1; }
+    }
+    .logo-main {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      border: 3px solid var(--neon-cyan);
+      background: white;
+      padding: 15px;
+      box-shadow: 0 0 50px rgba(0, 242, 255, 0.3);
+      animation: pulse 4s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 50px rgba(0, 242, 255, 0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 0 80px rgba(0, 242, 255, 0.5); }
+    }
+    h1 {
+      color: white;
+      font-size: 80px;
+      font-weight: 950;
+      letter-spacing: -4px;
+      margin: 0;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeInUp 1s forwards 0.5s;
+    }
+    .blue-text { color: var(--neon-cyan); text-shadow: 0 0 30px rgba(0, 242, 255, 0.4); }
+    p {
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      font-weight: 700;
+      font-size: 14px;
+      margin-top: 15px;
+      opacity: 0;
+      animation: fadeInUp 1s forwards 0.8s;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .scanner {
+      width: 250px; height: 3px;
+      background: rgba(255,255,255,0.05);
+      margin: 50px auto;
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+    .scanner-bar {
+      position: absolute;
+      left: 0; top: 0; height: 100%;
+      width: 0;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 20px var(--neon-cyan);
+      animation: scan 3s forwards cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    @keyframes scan {
+      to { width: 100%; }
+    }
+    body.exit {
+      animation: pageExit 0.8s forwards cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    @keyframes pageExit {
+      to { opacity: 0; transform: scale(1.1) rotateX(10deg); filter: blur(20px); }
+    }
+  </style>
+</head>
+<body>
+  <div id="splash">
+    <div class="logo-box">
+      <img src="logo.png" class="logo-main" alt="Logo">
+    </div>
+    <h1>YASHU <span class="blue-text">ARTS</span></h1>
+    <p>Loading 5D Experience</p>
+    <div class="scanner">
+      <div class="scanner-bar"></div>
+    </div>
+  </div>
+
+  <script>
+    setTimeout(() => {
+      document.body.classList.add('exit');
+      setTimeout(() => {
+        window.location.href = 'home.html';
+      }, 800);
+    }, 2200);
+  </script>
+</body>
+</html>
